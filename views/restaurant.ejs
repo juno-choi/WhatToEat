@@ -1,15 +1,68 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>식당뽑기</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <button onclick="randomChoice()">랜덤 뽑기</button>
-  </body>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  <script>
-    function randomChoice(){
+<html class="loading" lang="en" data-textdirection="ltr">
+<!-- BEGIN: Head-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta name="description" content="Modern admin is super flexible, powerful, clean &amp; modern responsive bootstrap 4 admin template with unlimited possibilities with bitcoin dashboard.">
+    <meta name="keywords" content="admin template, modern admin template, dashboard template, flat admin template, responsive admin template, web app, crypto dashboard, bitcoin dashboard">
+    <meta name="author" content="PIXINVENT">
+    <title>오늘 뭐 먹지</title>
+    <link rel="apple-touch-icon" href="/app-assets/images/ico/apple-icon-120.png">
+    <link rel="shortcut icon" type="image/x-icon" href="">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CQuicksand:300,400,500,700" rel="stylesheet">
+
+    <!-- BEGIN: Vendor CSS-->
+    <link rel="stylesheet" type="text/css" href="/app-assets/vendors/css/vendors.min.css">
+    <!-- END: Vendor CSS-->
+
+    <!-- BEGIN: Theme CSS-->
+    <link rel="stylesheet" type="text/css" href="/app-assets/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/app-assets/css/bootstrap-extended.css">
+    <link rel="stylesheet" type="text/css" href="/app-assets/css/colors.css">
+    <link rel="stylesheet" type="text/css" href="/app-assets/css/components.css">
+    <!-- END: Theme CSS-->
+
+    <!-- BEGIN: Page CSS-->
+    <link rel="stylesheet" type="text/css" href="/app-assets/css/core/menu/menu-types/vertical-compact-menu.css">
+    <link rel="stylesheet" type="text/css" href="/app-assets/css/core/colors/palette-gradient.css">
+    <link rel="stylesheet" type="text/css" href="/app-assets/fonts/mobiriseicons/24px/mobirise/style.css">
+    <link rel="stylesheet" type="text/css" href="/app-assets/css/pages/app-chat.css">
+    <!-- END: Page CSS-->
+
+    <!-- BEGIN: Custom CSS-->
+    <!-- END: Custom CSS-->
+
+</head>
+<style>
+.chat-message-custom1{
+  color: black !important;
+}
+.chat-message-custom2{
+  background-color : rgb(255,235,51) !important;
+  color: black !important;
+}
+</style>
+<!-- END: Head-->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+  const kind_map = new Map();
+  kind_map.set('KOREA','한식');kind_map.set('CHINA','중식');kind_map.set('JAPAN','일식');kind_map.set('WESTERM','양식');
+  const seperate_map = new Map();
+  seperate_map.set('RICE','밥');seperate_map.set('NOODLE','면');
+
+  function postRestaurant(){
+    location.href = '/postRestaurant'
+  }
+  function getRestaurant(){
+    location.href = '/restaurant'
+  }
+  function getMenu(){
+    chatSidebar.addClass("show");
+    chatOverlay.addClass("show");
+  }
+  function randomChoice(){
       let idx = '<%=length%>';
       const random = Math.floor(Math.random()*(idx))+1;
       axios({
@@ -17,11 +70,181 @@
         url : '/randomRestaurant',
         params : {idx : random}
       }).then((res)=>{
-        alert('이름 > '+res.data.result[0].NAME + "\n메뉴 > "+res.data.result[0].MENU);
+        makeRandomChat(res.data.result[0]);
+        const msg = `<button class="btn btn-primary" onclick="randomChoice()">랜덤뽑기</button> <button class="btn btn-secondary" onclick="conditionChoice()">조건뽑기</button> <button class="btn btn-secondary" onclick="getMenu()">모바일 목록</button>`;
+
+        makeUserChat(msg);
       }).catch(error=>{
         console.log(error);
       });
     }
+    function conditionChoice(){
+      alert('준비중입니다.');
+    }
 
-  </script>
+    function makeRandomChat(data){
+      let chat_div = document.createElement('div');
+      chat_div.setAttribute('class','chat chat-left');
+
+      let chat_body = document.createElement('div');
+      chat_body.setAttribute('class','chat-body');
+
+      let chat_message = document.createElement('div');
+      chat_message.setAttribute('class','chat-message-custom1 chat-message');
+
+      let p1 = document.createElement('p');
+      p1.innerText = '음식점 : '+data.NAME;
+      let p2 = document.createElement('p');
+      p2.innerText = '종류 : '+kind_map.get(data.KIND);
+      let p3 = document.createElement('p');
+      p3.innerText = '분류 : '+seperate_map.get(data.SEPERATE);
+      let p4 = document.createElement('p');
+      p4.innerText = '메뉴 : '+data.MENU;
+
+      let time = document.createElement('span');
+      time.setAttribute('class','chat-time');
+      const now = new Date();
+      let now2 = now.toLocaleTimeString();
+      now2 = now2.substring(0,(now2.length-3));
+      time.innerText = now2;
+
+      chat_message.appendChild(p1);
+      chat_message.appendChild(p2);
+      chat_message.appendChild(p3);
+      chat_message.appendChild(p4);
+      chat_message.appendChild(time);
+      chat_body.appendChild(chat_message);
+      chat_div.appendChild(chat_body);
+
+      const chat = document.querySelectorAll('.chat');
+      const chat_length = chat.length-1;
+      chat[chat_length].after(chat_div);
+
+      const chatContainer = document.querySelector('.card-body');
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function makeUserChat(msg){
+      let chat_div = document.createElement('div');
+      chat_div.setAttribute('class','chat');
+
+      let chat_body = document.createElement('div');
+      chat_body.setAttribute('class','chat-body');
+
+      let chat_message = document.createElement('div');
+      chat_message.setAttribute('class','chat-message-custom2 chat-message');
+
+      let p = document.createElement('p');
+      p.innerHTML = msg;
+
+      let time = document.createElement('span');
+      time.setAttribute('class','chat-time');
+      const now = new Date();
+      let now2 = now.toLocaleTimeString();
+      now2 = now2.substring(0,(now2.length-3));
+      time.innerText = now2;
+
+      chat_message.appendChild(p);
+      chat_message.appendChild(time);
+      chat_body.appendChild(chat_message);
+      chat_div.appendChild(chat_body);
+
+      const chat = document.querySelectorAll('.chat');
+      const chat_length = chat.length-1;
+      chat[chat_length].after(chat_div);
+
+      const chatContainer = document.querySelector('.card-body');
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+</script>
+<!-- BEGIN: Body-->
+
+<body class="vertical-layout vertical-compact-menu content-left-sidebar chat-application" data-open="click" data-menu="vertical-compact-menu" data-col="content-left-sidebar">
+
+    <!-- BEGIN: Content-->
+    <div class="app-content ">
+        <div class="sidebar-left">
+            <div class="sidebar">
+                <!-- app chat sidebar start -->
+                <div class="chat-sidebar card" style="height:calc(100vh);">
+                    <div class="chat-sidebar-list-wrapper" style="margin-top: 0;">
+                        <ul class="chat-sidebar-list">
+                            <li onclick="postRestaurant()">
+                                <h6 class="mb-0" style="font-family: '';">음식점 등록</h6>
+                            </li>
+                            <li onclick="getRestaurant()">
+                              <h6 class="mb-0" style="font-family: '';">음식점 뽑기</h6>
+                          </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- app chat sidebar ends -->
+
+            </div>
+        </div>
+        <div class="content-right">
+            <div class="content-overlay"></div>
+            <div class="content-wrapper">
+                <div class="content-header row">
+                </div>
+                <div class="content-body">
+                    <!-- app chat overlay -->
+                    <div class="chat-overlay"></div>
+                    <!-- app chat window start -->
+                    <section class="chat-window-wrapper">
+                      <div class="card chat-wrapper shadow-none mb-0">
+                          <div class="card-content" style="background-color: rgb(178,199,217);">
+                              <div class="card-body" style="height: calc(100vh); overflow: auto;">
+                                  <div class="chat-content">
+                                    <div class="chat chat-left">
+                                      <div class="chat-body">
+                                        <div class="chat-message-custom1 chat-message">
+                                            <p>실행하실 동작을 선택해주세요</p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="chat chat-right">
+                                      <div class="chat-body">
+                                        <div class="chat-message-custom2 chat-message">
+                                            <p><button class="btn btn-primary" onclick="randomChoice()">랜덤뽑기</button> <button class="btn btn-secondary" onclick="conditionChoice()">조건뽑기</button> <button class="btn btn-secondary" onclick="getMenu()">모바일 목록</button></p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <!-- chat card ends -->
+                    </section>
+                    <!-- app chat window ends -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END: Content-->
+
+    <div class="sidenav-overlay"></div>
+    <div class="drag-target"></div>
+
+
+    <!-- BEGIN: Vendor JS-->
+    <script src="/app-assets/vendors/js/vendors.min.js"></script>
+    <!-- BEGIN Vendor JS-->
+
+    <!-- BEGIN: Page Vendor JS-->
+    <!-- END: Page Vendor JS-->
+
+    <!-- BEGIN: Theme JS-->
+    <script src="/app-assets/js/core/app-menu.js"></script>
+    <script src="/app-assets/js/core/app.js"></script>
+    <!-- END: Theme JS-->
+
+    <!-- BEGIN: Page JS-->
+    <script src="/app-assets/js/scripts/pages/app-chat.js"></script>
+    <!-- END: Page JS-->
+
+</body>
+<!-- END: Body-->
+
 </html>
