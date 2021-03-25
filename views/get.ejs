@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>테이블</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>이름</th>
+        <th>TEL</th>
+      </tr>
+      <% rows.forEach((row, index)=>{%>
+        <tr>
+          <td><%=row.ID%></td>
+          <td><%=row.NAME%></td>
+          <td><%=row.TEL%></td>
+        </tr>
+      <%});%>
+        
+    </table>
+  </body>
+</html>

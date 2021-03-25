@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>식당뽑기</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <button onclick="randomChoice()">랜덤 뽑기</button>
+  </body>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+    function randomChoice(){
+      let idx = '<%=length%>';
+      const random = Math.floor(Math.random()*(idx))+1;
+      axios({
+        method:'get',
+        url : '/randomRestaurant',
+        params : {idx : random}
+      }).then((res)=>{
+        alert('이름 > '+res.data.result[0].NAME + "\n메뉴 > "+res.data.result[0].MENU);
+      }).catch(error=>{
+        console.log(error);
+      });
+    }
+
+  </script>
+</html>

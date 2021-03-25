@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>점심 뭐 먹지</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+      <button type="button" onclick="postRestaurant()">식당 목록</button>
+      <button type="button" onclick="getRestaurant()">식당 뽑기</button>
+  </body>
+  <script>
+      function postRestaurant(){
+          location.href='/postRestaurant'
+      }
+      function getRestaurant(){
+          location.href='/Restaurant'
+      }
+  </script>
+</html>
