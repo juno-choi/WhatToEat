@@ -1,49 +1,74 @@
 <!DOCTYPE html>
 <html>
+  <% include ./template/header %>
   <head>
     <title>식당 목록</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    <label>종류</label>
-    <select id="kind_select">
-      <option>선택</option>
-      <option value="KOREA">한식</option>
-      <option value="CHINA">중식</option>
-      <option value="JAPAN">일식</option>
-      <option value="WESTERM">양식</option>
-    </select>
-    <label>밥/면</label>
-    <select id="seperate_select">
-      <option>선택</option>
-      <option value="RICE">밥</option>
-      <option value="NOODLE">면</option>
-    </select>
-    <input type="text" id="name" placeholder="식당이름"/>
-    <input type="text" id="menu" placeholder="메뉴"/>
-    <button onclick="postRestaurant()">식당 등록</button>
-    <table>
-      <tr>
-        <th>IDX</th>
-        <th>종류</th>
-        <th>밥/면</th>
-        <th>이름</th>
-        <th>메뉴</th>
-      </tr>
-      <% rows.forEach((row, index)=>{%>
-        <tr>
-          <td><%=row.IDX%></td>
-          <td><%=row.KIND%></td>
-          <td><%=row.SEPERATE%></td>
-          <td><%=row.NAME%></td>
-          <td><%=row.MENU%></td>
-          <td><button onclick="deleteRestaurant('<%=row.IDX%>')">삭제</button></td>
-        </tr>
-      <%});%>
-    </table>
+
+    <div class="content-right">
+      <div class="content-overlay"></div>
+      <div class="content-wrapper">
+        <div class="content-header row">
+        </div>
+        <div class="content-body">
+            <!-- app chat overlay -->
+            <div class="chat-overlay"></div>
+            <!-- app chat window start -->
+            <section class="chat-window-wrapper">
+              <div class="card chat-wrapper shadow-none mb-0">
+                  <div class="card-content" style="background-color: rgb(178,199,217);">
+                    <div class="card-body" style="height: calc(100vh); overflow: auto;">
+                      <label>종류</label>
+                      <select id="kind_select">
+                        <option>선택</option>
+                        <option value="KOREA">한식</option>
+                        <option value="CHINA">중식</option>
+                        <option value="JAPAN">일식</option>
+                        <option value="WESTERM">양식</option>
+                      </select>
+                      <label>밥/면</label>
+                      <select id="seperate_select">
+                        <option>선택</option>
+                        <option value="RICE">밥</option>
+                        <option value="NOODLE">면</option>
+                      </select>
+                      <input type="text" id="name" placeholder="식당이름"/>
+                      <input type="text" id="menu" placeholder="메뉴"/>
+                      <button onclick="postRestaurant()">식당 등록</button>
+                      <table>
+                        <tr>
+                          <th>IDX</th>
+                          <th>종류</th>
+                          <th>밥/면</th>
+                          <th>이름</th>
+                          <th>메뉴</th>
+                        </tr>
+                        <% rows.forEach((row, index)=>{%>
+                          <tr>
+                            <td><%=row.IDX%></td>
+                            <td><%=row.KIND%></td>
+                            <td><%=row.SEPERATE%></td>
+                            <td><%=row.NAME%></td>
+                            <td><%=row.MENU%></td>
+                            <td><button onclick="deleteRestaurant('<%=row.IDX%>')">삭제</button></td>
+                          </tr>
+                        <%});%>
+                      </table>
+                    </div>
+                  </div>
+              </div>
+              <!-- chat card ends -->
+            </section>
+            <!-- app chat window ends -->
+
+        </div>
+      </div>
+    </div>
+
+    
     
   </body>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script>
     function postRestaurant(){
       const kind = document.getElementById('kind_select').value;
@@ -87,4 +112,5 @@
       });
     }
   </script>
+  <% include ./template/footer %>
 </html>

@@ -1,24 +1,36 @@
 <!DOCTYPE html>
 <html>
+  <% include ./template/header %>
   <head>
-    <title>테이블</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title></title>
   </head>
   <body>
-    <table>
-      <tr>
-        <th>ID</th>
-        <th>이름</th>
-        <th>TEL</th>
-      </tr>
-      <% rows.forEach((row, index)=>{%>
-        <tr>
-          <td><%=row.ID%></td>
-          <td><%=row.NAME%></td>
-          <td><%=row.TEL%></td>
-        </tr>
-      <%});%>
-        
-    </table>
+    <div class="content-right">
+      <div class="content-overlay"></div>
+      <div class="content-wrapper">
+        <div class="content-header row">
+        </div>
+        <div class="content-body">
+            <!-- app chat overlay -->
+            <div class="chat-overlay"></div>
+            <!-- app chat window start -->
+            <section class="chat-window-wrapper">
+              <div class="card chat-wrapper shadow-none mb-0">
+                  <div class="card-content" style="background-color: rgb(178,199,217);">
+                    <div class="card-body" style="height: calc(100vh); overflow: auto;">
+
+                      <!-- html 내용 들어갈 곳 -->
+
+                    </div>
+                  </div>
+              </div>
+              <!-- chat card ends -->
+            </section>
+            <!-- app chat window ends -->
+
+        </div>
+      </div>
+    </div>
   </body>
+  <% include ./template/footer %>
 </html>
