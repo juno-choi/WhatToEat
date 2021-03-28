@@ -15,8 +15,9 @@ router.get('/restaurant' , function(req, res, next){
 });
 
 router.get('/randomRestaurant' , function(req, res, next){
-  const idx = req.query.idx;
-  const params = {idx : idx};
+  const length = req.query.length;
+  const random = Math.floor(Math.random()*(length))+1;
+  const params = {idx : random};
   db.getOneRestaurant(params, (result)=>{
     res.send({result : result});
   });

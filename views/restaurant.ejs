@@ -47,6 +47,10 @@
 <!-- END: Head-->
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
+  const user_btn_message = `<button class="btn btn-primary btn-chat" onclick="randomChoice()">랜덤뽑기</button> <button class="btn btn-secondary btn-chat" onclick="conditionChoice()">조건뽑기</button> <button class="btn btn-secondary btn-chat" onclick="getMenu()">모바일 목록</button>`;
+  document.addEventListener("DOMContentLoaded", function(){
+    makeUserChat(user_btn_message);
+  });
   const kind_map = new Map();
   kind_map.set('KOREA','한식');kind_map.set('CHINA','중식');kind_map.set('JAPAN','일식');kind_map.set('WESTERM','양식');
   const seperate_map = new Map();
@@ -63,99 +67,102 @@
     chatOverlay.addClass("show");
   }
   function randomChoice(){
-      let idx = '<%=length%>';
-      const random = Math.floor(Math.random()*(idx))+1;
-      axios({
-        method:'get',
-        url : '/randomRestaurant',
-        params : {idx : random}
-      }).then((res)=>{
-        makeRandomChat(res.data.result[0]);
-        const msg = `<button class="btn btn-primary" onclick="randomChoice()">랜덤뽑기</button> <button class="btn btn-secondary" onclick="conditionChoice()">조건뽑기</button> <button class="btn btn-secondary" onclick="getMenu()">모바일 목록</button>`;
+    btnDisabled();
+    let length = '<%=length%>';
+    axios({
+      method:'get',
+      url : '/randomRestaurant',
+      params : {length : length}
+    }).then((res)=>{
+      makeRandomChat(res.data.result[0]);
+      makeUserChat(user_btn_message);
+    }).catch(error=>{
+      console.log(error);
+    });
+  }
+  function conditionChoice(){
+    alert('준비중입니다.');
+  }
+  function btnDisabled(){
+    document.querySelectorAll('.btn-chat').forEach((item)=>{
+      item.disabled = true;
+    });
+  }
 
-        makeUserChat(msg);
-      }).catch(error=>{
-        console.log(error);
-      });
-    }
-    function conditionChoice(){
-      alert('준비중입니다.');
-    }
+  function makeRandomChat(data){
+    let chat_div = document.createElement('div');
+    chat_div.setAttribute('class','chat chat-left');
 
-    function makeRandomChat(data){
-      let chat_div = document.createElement('div');
-      chat_div.setAttribute('class','chat chat-left');
+    let chat_body = document.createElement('div');
+    chat_body.setAttribute('class','chat-body');
 
-      let chat_body = document.createElement('div');
-      chat_body.setAttribute('class','chat-body');
+    let chat_message = document.createElement('div');
+    chat_message.setAttribute('class','chat-message-custom1 chat-message');
 
-      let chat_message = document.createElement('div');
-      chat_message.setAttribute('class','chat-message-custom1 chat-message');
+    let p1 = document.createElement('p');
+    p1.innerText = '음식점 : '+data.NAME;
+    let p2 = document.createElement('p');
+    p2.innerText = '종류 : '+kind_map.get(data.KIND);
+    let p3 = document.createElement('p');
+    p3.innerText = '분류 : '+seperate_map.get(data.SEPERATE);
+    let p4 = document.createElement('p');
+    p4.innerText = '메뉴 : '+data.MENU;
 
-      let p1 = document.createElement('p');
-      p1.innerText = '음식점 : '+data.NAME;
-      let p2 = document.createElement('p');
-      p2.innerText = '종류 : '+kind_map.get(data.KIND);
-      let p3 = document.createElement('p');
-      p3.innerText = '분류 : '+seperate_map.get(data.SEPERATE);
-      let p4 = document.createElement('p');
-      p4.innerText = '메뉴 : '+data.MENU;
+    let time = document.createElement('span');
+    time.setAttribute('class','chat-time');
+    const now = new Date();
+    let now2 = now.toLocaleTimeString();
+    now2 = now2.substring(0,(now2.length-3));
+    time.innerText = now2;
 
-      let time = document.createElement('span');
-      time.setAttribute('class','chat-time');
-      const now = new Date();
-      let now2 = now.toLocaleTimeString();
-      now2 = now2.substring(0,(now2.length-3));
-      time.innerText = now2;
+    chat_message.appendChild(p1);
+    chat_message.appendChild(p2);
+    chat_message.appendChild(p3);
+    chat_message.appendChild(p4);
+    chat_message.appendChild(time);
+    chat_body.appendChild(chat_message);
+    chat_div.appendChild(chat_body);
 
-      chat_message.appendChild(p1);
-      chat_message.appendChild(p2);
-      chat_message.appendChild(p3);
-      chat_message.appendChild(p4);
-      chat_message.appendChild(time);
-      chat_body.appendChild(chat_message);
-      chat_div.appendChild(chat_body);
+    const chat = document.querySelectorAll('.chat');
+    const chat_length = chat.length-1;
+    chat[chat_length].after(chat_div);
 
-      const chat = document.querySelectorAll('.chat');
-      const chat_length = chat.length-1;
-      chat[chat_length].after(chat_div);
+    const chatContainer = document.querySelector('.card-body');
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
 
-      const chatContainer = document.querySelector('.card-body');
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
+  function makeUserChat(msg){
+    let chat_div = document.createElement('div');
+    chat_div.setAttribute('class','chat');
 
-    function makeUserChat(msg){
-      let chat_div = document.createElement('div');
-      chat_div.setAttribute('class','chat');
+    let chat_body = document.createElement('div');
+    chat_body.setAttribute('class','chat-body');
 
-      let chat_body = document.createElement('div');
-      chat_body.setAttribute('class','chat-body');
+    let chat_message = document.createElement('div');
+    chat_message.setAttribute('class','chat-message-custom2 chat-message');
 
-      let chat_message = document.createElement('div');
-      chat_message.setAttribute('class','chat-message-custom2 chat-message');
+    let p = document.createElement('p');
+    p.innerHTML = msg;
 
-      let p = document.createElement('p');
-      p.innerHTML = msg;
+    let time = document.createElement('span');
+    time.setAttribute('class','chat-time');
+    const now = new Date();
+    let now2 = now.toLocaleTimeString();
+    now2 = now2.substring(0,(now2.length-3));
+    time.innerText = now2;
 
-      let time = document.createElement('span');
-      time.setAttribute('class','chat-time');
-      const now = new Date();
-      let now2 = now.toLocaleTimeString();
-      now2 = now2.substring(0,(now2.length-3));
-      time.innerText = now2;
+    chat_message.appendChild(p);
+    chat_message.appendChild(time);
+    chat_body.appendChild(chat_message);
+    chat_div.appendChild(chat_body);
 
-      chat_message.appendChild(p);
-      chat_message.appendChild(time);
-      chat_body.appendChild(chat_message);
-      chat_div.appendChild(chat_body);
+    const chat = document.querySelectorAll('.chat');
+    const chat_length = chat.length-1;
+    chat[chat_length].after(chat_div);
 
-      const chat = document.querySelectorAll('.chat');
-      const chat_length = chat.length-1;
-      chat[chat_length].after(chat_div);
-
-      const chatContainer = document.querySelector('.card-body');
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
+    const chatContainer = document.querySelector('.card-body');
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
 </script>
 <!-- BEGIN: Body-->
 
@@ -200,13 +207,6 @@
                                       <div class="chat-body">
                                         <div class="chat-message-custom1 chat-message">
                                             <p>실행하실 동작을 선택해주세요</p>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div class="chat chat-right">
-                                      <div class="chat-body">
-                                        <div class="chat-message-custom2 chat-message">
-                                            <p><button class="btn btn-primary" onclick="randomChoice()">랜덤뽑기</button> <button class="btn btn-secondary" onclick="conditionChoice()">조건뽑기</button> <button class="btn btn-secondary" onclick="getMenu()">모바일 목록</button></p>
                                         </div>
                                       </div>
                                     </div>

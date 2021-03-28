@@ -30,19 +30,24 @@ function getAllRestaurant(callback){
     });
 }
 function getOneRestaurant(params, callback){
-    connection.query(`SELECT * FROM RESTAURANT WHERE IDX = ?`, [params.idx], (err, rows, fields) =>{
+    connection.query(
+        `select * from (
+            SELECT @rownum:=@rownum+1 as rownum, r.* 
+            FROM RESTAURANT as r, (select @rownum:=0) tmp) 
+        as x 
+        where rownum = ?`, [params.idx], (err, rows, fields) =>{
         if(err) throw err;
         callback(rows);
     });
 }
 function insertRestaurant(params, callback){
-    connection.query(`INSERT INTO RESTAURANT (KIND, SEPERATE, NAME, MENU) VALUES (?,?,?,?);`, [params.kind, params.seperate, params.name, params.menu], (err, rows, fields) =>{
+    connection.query(`INSERT INTO RESTAURANT (KIND, SEPERATE, NAME, MENU) VALUES (?,?,?,?)`, [params.kind, params.seperate, params.name, params.menu], (err, rows, fields) =>{
         if(err) throw err;
         callback(rows);
     });
 }
 function deleteRestaurant(params, callback){
-    connection.query(`DELETE FROM RESTAURANT WHERE IDX = ?;`, [params.idx], (err, rows, fields) =>{
+    connection.query(`DELETE FROM RESTAURANT WHERE IDX = ?`, [params.idx], (err, rows, fields) =>{
         if(err) throw err;
         callback(rows);
     });
