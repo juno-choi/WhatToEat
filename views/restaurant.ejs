@@ -15,7 +15,11 @@
 </style>
 <!-- END: Head-->
 <script>
-  const user_btn_message = `<button class="btn btn-primary btn-chat" onclick="randomChoice()">랜덤뽑기</button> <button class="btn btn-secondary btn-chat" onclick="conditionChoice()">조건뽑기</button> <button class="btn btn-secondary btn-chat" onclick="getMenu()">모바일 목록</button>`;
+
+  let lat = '';
+  let logt = '';
+
+  const user_btn_message = `<button class="btn btn-primary btn-chat" onclick="getPlaceRandomChoice()">위치기반 뽑기</button> <button class="btn btn-secondary btn-chat" onclick="getMenu()">모바일 목록</button>`;
   document.addEventListener("DOMContentLoaded", function(){
     makeUserChat(user_btn_message);
   });
@@ -35,6 +39,29 @@
       params : {length : length}
     }).then((res)=>{
       makeRandomChat(res.data.result[0]);
+      makeUserChat(user_btn_message);
+    }).catch(error=>{
+      console.log(error);
+    });
+  }
+
+  function getPlaceRandomChoice(){
+    const watchID = navigator.geolocation.watchPosition((position) => {
+      lat = position.coords.latitude;
+      logt = position.coords.longitude;
+    });
+    placeRandomChoice();
+  }
+  
+  
+  function placeRandomChoice(){
+    btnDisabled();
+    axios({
+      method:'get',
+      url : '/placeRandomRestaurant',
+      params : {lat : lat, logt : logt}
+    }).then((res)=>{
+      makePlaceRandomChat(res.data.result[0]);
       makeUserChat(user_btn_message);
     }).catch(error=>{
       console.log(error);
@@ -67,6 +94,49 @@
     p3.innerText = '분류 : '+seperate_map.get(data.SEPERATE);
     let p4 = document.createElement('p');
     p4.innerText = '메뉴 : '+data.MENU;
+
+    let time = document.createElement('span');
+    time.setAttribute('class','chat-time');
+    const now = new Date();
+    let now2 = now.toLocaleTimeString();
+    now2 = now2.substring(0,(now2.length-3));
+    time.innerText = now2;
+
+    chat_message.appendChild(p1);
+    chat_message.appendChild(p2);
+    chat_message.appendChild(p3);
+    chat_message.appendChild(p4);
+    chat_message.appendChild(time);
+    chat_body.appendChild(chat_message);
+    chat_div.appendChild(chat_body);
+
+    const chat = document.querySelectorAll('.chat');
+    const chat_length = chat.length-1;
+    chat[chat_length].after(chat_div);
+
+    const chatContainer = document.querySelector('.card-body');
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+
+  function makePlaceRandomChat(data){
+    let chat_div = document.createElement('div');
+    chat_div.setAttribute('class','chat chat-left');
+
+    let chat_body = document.createElement('div');
+    chat_body.setAttribute('class','chat-body');
+
+    let chat_message = document.createElement('div');
+    chat_message.setAttribute('class','chat-message-custom1 chat-message');
+
+    let p1 = document.createElement('p');
+    p1.innerText = '위치 : '+data.SIGUN_NM;
+    let p2 = document.createElement('p');
+    p2.innerText = '주소 : '+data.REFINE_LOTNO_ADDR;
+    let p3 = document.createElement('p');
+    p3.innerText = '종류 : '+data.SANITTN_BIZCOND_NM;
+    let p4 = document.createElement('p');
+    p4.innerText = '음식점 : '+data.BIZPLC_NM;
+    
 
     let time = document.createElement('span');
     time.setAttribute('class','chat-time');
@@ -143,6 +213,7 @@
                                   <div class="chat-body">
                                     <div class="chat-message-custom1 chat-message">
                                         <p>실행하실 동작을 선택해주세요</p>
+                                        <buttom type="button" onclick="wich()">위치</buttom>
                                     </div>
                                   </div>
                                 </div>
