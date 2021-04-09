@@ -46,7 +46,16 @@
   }
 
   function getPlaceRandomChoice(){
-    const watchID = navigator.geolocation.watchPosition((position) => {
+
+    if(lat == ''){
+      alert('위치기반 기능을 먼저 실행시켜주세요!');
+      const watchID = navigator.geolocation.getCurrentPosition((position) => {
+        lat = position.coords.latitude;
+        logt = position.coords.longitude;
+      });
+      return;
+    }
+    const watchID = navigator.geolocation.getCurrentPosition((position) => {
       lat = position.coords.latitude;
       logt = position.coords.longitude;
     });
