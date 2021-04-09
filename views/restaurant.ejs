@@ -19,7 +19,7 @@
   let lat = '';
   let logt = '';
 
-  const user_btn_message = `<button class="btn btn-primary btn-chat" onclick="getPlaceRandomChoice()">위치기반 뽑기</button> <button class="btn btn-secondary btn-chat" onclick="getMenu()">모바일 목록</button>`;
+  const user_btn_message = `<button class="btn btn-primary btn-chat" onclick="getLocation()">위치기반 뽑기</button> <button class="btn btn-secondary btn-chat" onclick="getMenu()">모바일 목록</button>`;
   document.addEventListener("DOMContentLoaded", function(){
     makeUserChat(user_btn_message);
   });
@@ -61,7 +61,21 @@
     });
     placeRandomChoice();
   }
-  
+  function getLocation() {
+    if (navigator.geolocation) { // GPS를 지원하면
+      navigator.geolocation.getCurrentPosition(function(position) {
+        alert(position.coords.latitude + ' ' + position.coords.longitude);
+      }, function(error) {
+        console.error(error);
+      }, {
+        enableHighAccuracy: false,
+        maximumAge: 0,
+        timeout: Infinity
+      });
+    } else {
+      alert('GPS를 지원하지 않습니다');
+    }
+  }
   
   function placeRandomChoice(){
     btnDisabled();
