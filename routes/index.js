@@ -26,11 +26,10 @@ router.get('/randomRestaurant' , function(req, res, next){
 
 router.get('/placeRandomRestaurant' , function(req, res, next){
 
-  console.log(req.query);
   let params = {};
   params.lat = req.query.lat;
   params.logt = req.query.logt;
-  params.distance = 1;
+  params.distance = 0.3;
   let restaurantApiCount;
   new Promise((resolve, reject)=>{
     db.getRestaurantApiCountByPlace(params, (result)=>{
@@ -41,8 +40,8 @@ router.get('/placeRandomRestaurant' , function(req, res, next){
     const random = Math.floor(Math.random()*(restaurantApiCount[0].CNT))+1;
     params.random = random;
     db.getRestaurantApiByPlace(params, (result)=>{
-    res.send({result : result});
-  });
+      res.send({result : result});
+    });
   });
   
   
@@ -70,15 +69,17 @@ router.post('/deleteRestaurant' , function(req, res, next){
   });
 });
 
-/* router.get('/readFile' , function(req, res, next){
-  const jsonFile = fs.readFileSync('public/china.json','utf-8');
+router.get('/readFile' , function(req, res, next){
+  const fileName = req.query.fileName;
+  console.log('public/'+fileName+'.json');
+  const jsonFile = fs.readFileSync('public/'+fileName+'.json','utf-8');
   console.log('파일 파싱');
 
   const jsonData = JSON.parse(jsonFile);
   console.log('json 파싱');
   
   for(let i=0; i<jsonData.length; i++){
-    if(jsonData[i].BSN_STATE_NM == '영업'){
+    if(jsonData[i].BSN_STATE_NM == '운영중'){
       db.insertRestaurantApi(jsonData[i], (result, err)=>{
         if(err){
           console.log('실패');
@@ -89,6 +90,6 @@ router.post('/deleteRestaurant' , function(req, res, next){
     }
   }
   console.log('파일 읽기 종료');
-}); */
+});
 
 module.exports = router;
